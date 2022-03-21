@@ -6,4 +6,6 @@ app.get('/api/hello', function (_, res) {
     res.send('Hello World');
 });
 
-app.listen(3000);
+app.listen(3000, () => {
+    console.log('App is running...')
+});
