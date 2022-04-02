@@ -6,12 +6,10 @@ jobs:
  
   build:
     runs-on: ubuntu-latest`
-    defaults:
-      run:
-        working-directory: ./webapp
     steps:
       - uses: actions/checkout@v2
       - uses: akhileshns/heroku-deploy@v3.4.6
+        working-directory: ./webapp
         with:
             heroku_api_key: ${{secrets.HEROKU_API_KEY}}
             heroku_app_name: "tejodoro-web-app"
