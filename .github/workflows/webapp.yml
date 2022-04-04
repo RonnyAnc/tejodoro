@@ -1,6 +1,9 @@
 name: Web App
 
-on: [push]
+on:
+  push:
+    paths:
+    - 'webapp/**'
 
 defaults:
   run:
