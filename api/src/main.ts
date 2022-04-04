@@ -3,7 +3,7 @@ import express from 'express';
 const app = express();
 
 app.get('/', (_, res) => {
-    res.send('Welcome to the Tejodoro app!');
+    res.send('Welcome to the Tejodoro app! This made by Ronny and Fran');
 });
 
 app.get('/api/hello', function (_, res) {
