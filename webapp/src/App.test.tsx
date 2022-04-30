@@ -1,39 +1,54 @@
 import React from "react";
+import { screen } from '@testing-library/react';
 import { fireEvent, render } from "@testing-library/react";
 import App from "./App";
 
+function aCompleteTimer() {
+    return (callback: Function, milliseconds: number) => callback();
+}
+
+function aTimerStartedXMinutesAgo(minutesAgo: number) {
+    let iterations = 0;
+    return (callback: Function, milliseconds: number) => {
+        if (iterations === minutesAgo) {
+            return
+        }
+        callback();
+        iterations++;
+    }
+
+}
+
 describe("App test", () => {
-    beforeEach(() => {
-        jest.useFakeTimers();
-    });
+    test('should update countdown when one second passes', () => {
+        render(<App pomodoroDurationInMinutes={5} schedule={aTimerStartedXMinutesAgo(1)}/>);
 
-    test("should allow to start a pomodoro", () => {
-        const { getByTestId, queryByTestId } = render(<App />);
-
-        const startButton = getByTestId("start-pomodoro");
+        const startButton = screen.getByTestId("start-pomodoro");
         fireEvent.click(startButton);
-        expect(queryByTestId("start-pomodoro")).not.toBeInTheDocument();
-        expect(queryByTestId("start-break")).not.toBeInTheDocument();
-        jest.advanceTimersByTime(1000 * 60);
-        jest.advanceTimersByTime(1000 * 60);
-        expect(getByTestId("pomodoro-counter")).toContain("24");
-        jest.runOnlyPendingTimers();
 
-        getByTestId("pomodoro-finished-message");
+        expect(screen.getByTestId("timer")).toHaveTextContent('4')
+        expect(screen.queryByTestId("start-pomodoro")).not.toBeInTheDocument()
+        expect(screen.queryByTestId("start-break")).not.toBeInTheDocument()
+        expect(screen.getByRole('button', {name: 'stop-timer'})).toBeInTheDocument()
+    })
+
+    test("should reach 0 when pomodoro timer ends", () => {
+        render(<App pomodoroDurationInMinutes={5} schedule={aCompleteTimer()}/>);
+
+        const startButton = screen.getByTestId("start-pomodoro");
+        fireEvent.click(startButton);
+
+        expect(screen.queryByTestId("timer")).not.toBeInTheDocument()
+        expect(screen.getByTestId("start-pomodoro")).toBeInTheDocument();
+        expect(screen.getByTestId("start-break")).toBeInTheDocument();
     });
 
     test("should allow to take a break after finishing a pomodoro", () => {
-        const { getByTestId, queryByTestId } = render(<App />);
+        render(<App breakDurationInMinutes={2} schedule={aTimerStartedXMinutesAgo(1)}/>);
 
-        const startButton = getByTestId("start-pomodoro");
-        expect(queryByTestId("start-break")).not.toBeInTheDocument();
-        fireEvent.click(startButton);
-        jest.runOnlyPendingTimers();
-
-        const startBreakButton = getByTestId("start-break");
+        const startBreakButton = screen.getByTestId("start-break");
         fireEvent.click(startBreakButton);
-        jest.runOnlyPendingTimers();
 
-        getByTestId("break-finished-message");
+        expect(screen.getByTestId("timer")).toHaveTextContent('1')
     });
 });

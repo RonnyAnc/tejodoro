@@ -2,48 +2,54 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 type SessionStatus =
-    | "NotStarted"
-    | "PomodoroRunning"
-    | "PomodoroFinished"
-    | "BreakRunning"
-    | "BreakFinished";
+    | "TimerRunning"
+    | "Idle";
 
-const DEFAULT_POMODORO_DURATION = 25;
+const DEFAULT_POMODORO_DURATION = 25 * 60;
 const DEFAULT_BREAK_DURATION = 5;
 
-const App: React.FunctionComponent = () => {
+type Props = {
+    pomodoroDurationInMinutes?: number,
+    breakDurationInMinutes?: number,
+    schedule(callback: Function, milliseconds: number): void  
+}
+
+
+const App: React.FunctionComponent<Props> = ({ 
+    schedule, 
+    pomodoroDurationInMinutes: pomodoroDuration = DEFAULT_POMODORO_DURATION,
+    breakDurationInMinutes = 5 * 60
+}) => {
     const [countdownInSeconds, setCountdown] = useState<number>(
-        DEFAULT_POMODORO_DURATION * 60
+        pomodoroDuration
     );
     const [sessionStatus, setSessionStatus] =
-        useState<SessionStatus>("NotStarted");
+        useState<SessionStatus>("Idle");
 
     useEffect(() => {
-        countdownInSeconds > 0 &&
-            setTimeout(() => {
-                setCountdown(countdownInSeconds - 1);
-            }, 1000);
-    }, [countdownInSeconds]);
+        if (sessionStatus === "TimerRunning") {
+            if (countdownInSeconds <= 0) {
+                setSessionStatus("Idle");
+            }
+            countdownInSeconds > 0 &&
+                schedule(() => {
+                    console.log('----changing countdown');
+                    setCountdown(countdownInSeconds - 1);
+                }, 1000);
+        }
+    }, [countdownInSeconds, sessionStatus, schedule]);
 
     function startPomodoro() {
-        setSessionStatus("PomodoroRunning");
-        const secondsInAMinute = 60;
-        setInterval(() => {
-            setSessionStatus("PomodoroFinished");
-        }, DEFAULT_POMODORO_DURATION * 1000 * secondsInAMinute);
+        setSessionStatus("TimerRunning");
     }
 
     function startBreak() {
-        const secondsInAMinute = 60;
-        setSessionStatus("BreakRunning");
-        setInterval(() => {
-            setSessionStatus("BreakFinished");
-        }, DEFAULT_BREAK_DURATION * 1000 * secondsInAMinute);
+        setSessionStatus("TimerRunning");
     }
 
     return (
         <div className="App">
-            {sessionStatus !== "PomodoroRunning" && (
+            {sessionStatus !== "TimerRunning" && (
                 <>
                     <button
                         data-testid="start-pomodoro"
@@ -51,25 +57,16 @@ const App: React.FunctionComponent = () => {
                     >
                         Start pomodoro
                     </button>
-                </>
-            )}
-            {sessionStatus === "PomodoroRunning" && (
-                <>
-                    <div data-testid="pomodoro-counter">
-                        {countdownInSeconds / 60}
-                    </div>
-                </>
-            )}
-            {sessionStatus === "PomodoroFinished" && (
-                <>
-                    <p data-testid="pomodoro-finished-message">
-                        Pomodoro has finished
-                    </p>
                     <button data-testid="start-break" onClick={startBreak} />
                 </>
             )}
-            {sessionStatus === "BreakFinished" && (
-                <p data-testid="break-finished-message">Break has finished</p>
+            {sessionStatus === "TimerRunning" && (
+                <>
+                    <div data-testid="timer">
+                        {countdownInSeconds}
+                    </div>
+                    <button aria-label="stop-timer">Stop timer</button>
+                </>
             )}
         </div>
     );
