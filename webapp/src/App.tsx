@@ -5,7 +5,7 @@ type SessionStatus =
     | "TimerRunning"
     | "Idle";
 
-const DEFAULT_POMODORO_DURATION = 25 * 60;
+const DEFAULT_POMODORO_DURATION = 25;
 const DEFAULT_BREAK_DURATION = 5;
 
 type Props = {
@@ -17,11 +17,13 @@ type Props = {
 
 const App: React.FunctionComponent<Props> = ({ 
     schedule, 
-    pomodoroDurationInMinutes: pomodoroDuration = DEFAULT_POMODORO_DURATION,
-    breakDurationInMinutes = 5 * 60
+    pomodoroDurationInMinutes = DEFAULT_POMODORO_DURATION,
+    breakDurationInMinutes = DEFAULT_BREAK_DURATION
 }) => {
+    const pomodoroDurationInSeconds = pomodoroDurationInMinutes * 60
+    const breakDurationInSeconds = breakDurationInMinutes * 60
     const [countdownInSeconds, setCountdown] = useState<number>(
-        pomodoroDuration
+        pomodoroDurationInSeconds
     );
     const [sessionStatus, setSessionStatus] =
         useState<SessionStatus>("Idle");
@@ -33,7 +35,6 @@ const App: React.FunctionComponent<Props> = ({
             }
             countdownInSeconds > 0 &&
                 schedule(() => {
-                    console.log('----changing countdown');
                     setCountdown(countdownInSeconds - 1);
                 }, 1000);
         }
@@ -44,6 +45,7 @@ const App: React.FunctionComponent<Props> = ({
     }
 
     function startBreak() {
+        setCountdown(breakDurationInSeconds)
         setSessionStatus("TimerRunning");
     }
 
@@ -63,7 +65,7 @@ const App: React.FunctionComponent<Props> = ({
             {sessionStatus === "TimerRunning" && (
                 <>
                     <div data-testid="timer">
-                        {countdownInSeconds}
+                        {new Date(countdownInSeconds * 1000).toISOString().substring(14, 19)}
                     </div>
                     <button aria-label="stop-timer">Stop timer</button>
                 </>

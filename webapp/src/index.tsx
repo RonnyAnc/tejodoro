@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App schedule={(func: Function, milliseconds: number) => setTimeout(func, milliseconds)}/>
   </React.StrictMode>,
   document.getElementById('root')
 );

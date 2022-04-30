@@ -8,13 +8,13 @@ function aCompleteTimer() {
 }
 
 function aTimerStartedXMinutesAgo(minutesAgo: number) {
-    let iterations = 0;
-    return (callback: Function, milliseconds: number) => {
-        if (iterations === minutesAgo) {
+    let seconds = 0;
+    return (callback: Function, _: number) => {
+        if (seconds / 60 === minutesAgo) {
             return
         }
         callback();
-        iterations++;
+        seconds++;
     }
 
 }
@@ -26,7 +26,7 @@ describe("App test", () => {
         const startButton = screen.getByTestId("start-pomodoro");
         fireEvent.click(startButton);
 
-        expect(screen.getByTestId("timer")).toHaveTextContent('4')
+        expect(screen.getByTestId("timer")).toHaveTextContent('04:00')
         expect(screen.queryByTestId("start-pomodoro")).not.toBeInTheDocument()
         expect(screen.queryByTestId("start-break")).not.toBeInTheDocument()
         expect(screen.getByRole('button', {name: 'stop-timer'})).toBeInTheDocument()
@@ -49,6 +49,6 @@ describe("App test", () => {
         const startBreakButton = screen.getByTestId("start-break");
         fireEvent.click(startBreakButton);
 
-        expect(screen.getByTestId("timer")).toHaveTextContent('1')
+        expect(screen.getByTestId("timer")).toHaveTextContent('01:00')
     });
 });
