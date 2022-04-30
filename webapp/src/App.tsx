@@ -49,6 +49,10 @@ const App: React.FunctionComponent<Props> = ({
         setSessionStatus("TimerRunning");
     }
 
+    function stopTimer() {
+        setSessionStatus("Idle");
+    }
+
     return (
         <div className="App">
             {sessionStatus !== "TimerRunning" && (
@@ -67,7 +71,7 @@ const App: React.FunctionComponent<Props> = ({
                     <div data-testid="timer">
                         {new Date(countdownInSeconds * 1000).toISOString().substring(14, 19)}
                     </div>
-                    <button aria-label="stop-timer">Stop timer</button>
+                    <button aria-label="stop-timer" onClick={stopTimer}>Stop timer</button>
                 </>
             )}
         </div>

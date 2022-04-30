@@ -51,4 +51,17 @@ describe("App test", () => {
 
         expect(screen.getByTestId("timer")).toHaveTextContent('01:00')
     });
+
+    test("should stop timer when it is interrupted", () => {
+        render(<App breakDurationInMinutes={2} schedule={aTimerStartedXMinutesAgo(1)}/>);
+
+        const startBreakButton = screen.getByTestId("start-break");
+        fireEvent.click(startBreakButton)
+        const stopTimer = screen.getByRole('button', {name: 'stop-timer'});
+        fireEvent.click(stopTimer);
+
+        expect(screen.queryByTestId("timer")).not.toBeInTheDocument()
+        expect(screen.getByTestId("start-pomodoro")).toBeInTheDocument();
+        expect(screen.getByTestId("start-break")).toBeInTheDocument();
+    });
 });
