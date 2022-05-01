@@ -41,6 +41,7 @@ const App: React.FunctionComponent<Props> = ({
     }, [countdownInSeconds, sessionStatus, schedule]);
 
     function startPomodoro() {
+        setCountdown(pomodoroDurationInSeconds)
         setSessionStatus("TimerRunning");
     }
 
@@ -63,7 +64,7 @@ const App: React.FunctionComponent<Props> = ({
                     >
                         Start pomodoro
                     </button>
-                    <button data-testid="start-break" onClick={startBreak} />
+                    <button data-testid="start-break" onClick={startBreak} >Start break</button>
                 </>
             )}
             {sessionStatus === "TimerRunning" && (

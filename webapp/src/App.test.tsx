@@ -64,4 +64,17 @@ describe("App test", () => {
         expect(screen.getByTestId("start-pomodoro")).toBeInTheDocument();
         expect(screen.getByTestId("start-break")).toBeInTheDocument();
     });
+
+    test("should restore pomodoro time after switching from a break", () => {
+        render(<App pomodoroDurationInMinutes={25} schedule={aTimerStartedXMinutesAgo(1)}/>);
+        const startBreakButton = screen.getByTestId("start-break");
+        fireEvent.click(startBreakButton)
+        const stopTimer = screen.getByRole('button', {name: 'stop-timer'});
+        fireEvent.click(stopTimer);
+
+        const startPomodoro = screen.getByTestId("start-pomodoro");
+        fireEvent.click(startPomodoro)
+
+        expect(screen.queryByTestId("timer")).toContainHTML("25:00")
+    });
 });
