@@ -2,48 +2,61 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 type SessionStatus =
-    | "NotStarted"
-    | "PomodoroRunning"
-    | "PomodoroFinished"
-    | "BreakRunning"
-    | "BreakFinished";
+    | "TimerRunning"
+    | "Idle";
 
 const DEFAULT_POMODORO_DURATION = 25;
 const DEFAULT_BREAK_DURATION = 5;
 
-const App: React.FunctionComponent = () => {
+type Props = {
+    pomodoroDurationInMinutes?: number,
+    breakDurationInMinutes?: number,
+    schedule(callback: Function, milliseconds: number): void  
+}
+
+
+const App: React.FunctionComponent<Props> = ({ 
+    schedule, 
+    pomodoroDurationInMinutes = DEFAULT_POMODORO_DURATION,
+    breakDurationInMinutes = DEFAULT_BREAK_DURATION
+}) => {
+    const pomodoroDurationInSeconds = pomodoroDurationInMinutes * 60
+    const breakDurationInSeconds = breakDurationInMinutes * 60
     const [countdownInSeconds, setCountdown] = useState<number>(
-        DEFAULT_POMODORO_DURATION * 60
+        pomodoroDurationInSeconds
     );
     const [sessionStatus, setSessionStatus] =
-        useState<SessionStatus>("NotStarted");
+        useState<SessionStatus>("Idle");
 
     useEffect(() => {
-        countdownInSeconds > 0 &&
-            setTimeout(() => {
-                setCountdown(countdownInSeconds - 1);
-            }, 1000);
-    }, [countdownInSeconds]);
+        if (sessionStatus === "TimerRunning") {
+            if (countdownInSeconds <= 0) {
+                setSessionStatus("Idle");
+            }
+            countdownInSeconds > 0 &&
+                schedule(() => {
+                    setCountdown(countdownInSeconds - 1);
+                }, 1000);
+        }
+    }, [countdownInSeconds, sessionStatus, schedule]);
 
     function startPomodoro() {
-        setSessionStatus("PomodoroRunning");
-        const secondsInAMinute = 60;
-        setInterval(() => {
-            setSessionStatus("PomodoroFinished");
-        }, DEFAULT_POMODORO_DURATION * 1000 * secondsInAMinute);
+        setCountdown(pomodoroDurationInSeconds)
+        setSessionStatus("TimerRunning");
     }
 
     function startBreak() {
-        const secondsInAMinute = 60;
-        setSessionStatus("BreakRunning");
-        setInterval(() => {
-            setSessionStatus("BreakFinished");
-        }, DEFAULT_BREAK_DURATION * 1000 * secondsInAMinute);
+        setCountdown(breakDurationInSeconds)
+        setSessionStatus("TimerRunning");
+    }
+
+    function stopTimer() {
+        setSessionStatus("Idle");
     }
 
     return (
         <div className="App">
-            {sessionStatus !== "PomodoroRunning" && (
+            {sessionStatus !== "TimerRunning" && (
                 <>
                     <button
                         data-testid="start-pomodoro"
@@ -51,25 +64,16 @@ const App: React.FunctionComponent = () => {
                     >
                         Start pomodoro
                     </button>
+                    <button data-testid="start-break" onClick={startBreak} >Start break</button>
                 </>
             )}
-            {sessionStatus === "PomodoroRunning" && (
+            {sessionStatus === "TimerRunning" && (
                 <>
-                    <div data-testid="pomodoro-counter">
-                        {countdownInSeconds / 60}
+                    <div data-testid="timer">
+                        {new Date(countdownInSeconds * 1000).toISOString().substring(14, 19)}
                     </div>
+                    <button aria-label="stop-timer" onClick={stopTimer}>Stop timer</button>
                 </>
-            )}
-            {sessionStatus === "PomodoroFinished" && (
-                <>
-                    <p data-testid="pomodoro-finished-message">
-                        Pomodoro has finished
-                    </p>
-                    <button data-testid="start-break" onClick={startBreak} />
-                </>
-            )}
-            {sessionStatus === "BreakFinished" && (
-                <p data-testid="break-finished-message">Break has finished</p>
             )}
         </div>
     );
