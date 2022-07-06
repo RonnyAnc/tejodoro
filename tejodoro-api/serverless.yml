@@ -1,0 +1,18 @@
+org: fortizabril
+app: tejodoro-api
+service: tejodoro-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  httpApi:
+    cors: true
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
