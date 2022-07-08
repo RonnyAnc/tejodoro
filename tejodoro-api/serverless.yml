@@ -1,5 +1,5 @@
 org: fortizabril
-app: tejodoro-api
+app: tejodoro
 service: tejodoro-api
 frameworkVersion: '3'
 
