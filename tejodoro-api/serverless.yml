@@ -6,8 +6,7 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs14.x
-  httpApi:
-    cors: true
+  region: eu-west-1
 
 functions:
   hello:
@@ -16,3 +15,6 @@ functions:
       - httpApi:
           path: /
           method: get
+
+plugins:
+  - serverless-plugin-typescript

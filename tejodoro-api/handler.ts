@@ -1,8 +1,8 @@
-"use strict";
+import { Handler } from 'aws-lambda';
 
-module.exports.hello = async (event) => {
+export const hello: Handler = (_event: any) => {
   const now = new Date();
-  return {
+  const response = {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
@@ -24,4 +24,5 @@ module.exports.hello = async (event) => {
       2
     ),
   };
-};
+  return new Promise(resolve => resolve(response))
+}
