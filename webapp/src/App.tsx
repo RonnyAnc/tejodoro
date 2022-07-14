@@ -1,7 +1,11 @@
 import React from 'react';
 import './App.css';
-import { Pomodoro } from './infrastructure/components/Pomodoro';
+import { GetPomodoro } from './application/GetPomodoro';
+import { PomodoroSession } from './infrastructure/components/PomodoroSession';
+import { PomodoroHTTPRepository } from './infrastructure/repositories/PomodoroHTTPRepository';
 
-const App: React.FunctionComponent = () => <Pomodoro />;
+const getPomodoro = new GetPomodoro(new PomodoroHTTPRepository());
+
+const App: React.FunctionComponent = () => <PomodoroSession getPomodoro={getPomodoro} />;
 
 export default App;

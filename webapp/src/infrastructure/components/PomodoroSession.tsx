@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import Countdown from 'react-countdown';
 import { GetPomodoro } from '../../application/GetPomodoro';
-import { PomodoroHTTPRepository } from '../repositories/PomodoroHTTPRepository';
 
-const getPomodoro = new GetPomodoro(new PomodoroHTTPRepository());
+type Props = {
+  getPomodoro: GetPomodoro;
+}
 
-export const Pomodoro: React.FunctionComponent = () => {
+export const PomodoroSession: React.FunctionComponent<Props> = ({ getPomodoro }) => {
   const [endTime, setEndtime] = useState<Date>();
   const [participants, setParticipants] = useState<Array<string>>([]);
   useEffect(() => {
@@ -13,7 +14,7 @@ export const Pomodoro: React.FunctionComponent = () => {
       setEndtime(pomodoro.status.endTime);
       setParticipants(pomodoro.participants);
     });
-  }, []);
+  }, [getPomodoro]);
 
   return (
     <div>
