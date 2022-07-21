@@ -1,6 +1,6 @@
 import { Handler } from "aws-lambda";
 
-export const hello: Handler = (_event: any) => {
+export const getPomodoro: Handler = (_event: any) => {
     const now = new Date();
     const response = {
         statusCode: 200,
