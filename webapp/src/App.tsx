@@ -1,35 +1,11 @@
-import React, {useState, useEffect} from "react";
-import "./App.css";
-import Countdown from 'react-countdown';
+import React from 'react';
+import './App.css';
+import { GetPomodoro } from './application/GetPomodoro';
+import { PomodoroSession } from './infrastructure/components/PomodoroSession';
+import { PomodoroHTTPRepository } from './infrastructure/repositories/PomodoroHTTPRepository';
 
-const App: React.FunctionComponent = () => {
-    const [endTime, setEndtime] = useState<Date>();
-    const [participants, setParticipants] = useState<Array<{ username: string }>>([])
-    useEffect(() => {
-        fetch(`${process.env.REACT_APP_TEJODORO_API_URL}`)
-          .then((response) => response.json())
-          .then((session) => {
-            setEndtime(session.status.endTime);
-            setParticipants(session.participants)
-          });
-      }, []);
+const getPomodoro = new GetPomodoro(new PomodoroHTTPRepository());
 
-    return (
-        <div>
-            {endTime && <Countdown date={endTime} />}
-            <div>
-                Participants:
-                {
-                    participants.map(participant =>
-                        <p>
-                        {participant.username}
-                        </p>
-                    )
-                }
-            </div>
-
-        </div>
-    );
-};
+const App: React.FunctionComponent = () => <PomodoroSession getPomodoro={getPomodoro} />;
 
 export default App;
