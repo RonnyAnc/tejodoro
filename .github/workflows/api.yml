@@ -3,18 +3,21 @@ name: API
 on:
   push:
     paths:
-    - 'api/**'
+    - 'tejodoro-api/**'
 
 defaults:
   run:
-    working-directory: ./api
+    working-directory: ./tejodoro-api
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
     steps:
       - name: Code checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Npm install
         run: npm ci --no-audit
@@ -31,16 +34,15 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        node-version: [16.x]
     if: endsWith(github.ref, '/main')
     steps:
-      - name: Code checkout
-        uses: actions/checkout@v2
-
-      - name: Deploy
-        uses: akhileshns/heroku-deploy@v3.12.12
+      - uses: actions/checkout@v3
+      - name: serverless deploy
+        uses: serverless/github-action@v3.1
         with:
-          appdir: ./api
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: "tejodoro"
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
-          usedocker: true
+          args: deploy
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
