@@ -19,7 +19,7 @@ export const getPomodoro: Handler = (_event: any) => {
             },
             null,
             2
-        ),
+        )
     };
     return new Promise((resolve) => resolve(response));
 };

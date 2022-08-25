@@ -6,7 +6,7 @@ describe('GetPomodoro', () => {
     const aPomodoro = new Pomodoro({
       name: 'aPomodoro',
       status: { name: 'aStatus', endTime: new Date() },
-      participants: ['aParticipant'],
+      participants: ['aParticipant']
     });
     const repository = { find: async (name: string) => aPomodoro };
     const service = new GetPomodoro(repository);
