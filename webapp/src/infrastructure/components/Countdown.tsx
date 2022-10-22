@@ -13,7 +13,7 @@ export const Countdown: React.FunctionComponent<Props> = ({ endTime }) => {
     completed
   }: { minutes: number; seconds: number; completed: boolean }) => {
     if (completed) {
-      return <span>Session completed. Take a break!</span>
+      return <span>Session completed. Time for a break!</span>
     }
 
     return <Timer>{minutes}:{seconds}</Timer>
