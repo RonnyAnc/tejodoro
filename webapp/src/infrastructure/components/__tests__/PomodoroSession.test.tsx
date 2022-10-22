@@ -32,6 +32,6 @@ describe('Pomodoro should', () => {
 
     render(<PomodoroSession getPomodoro={getPomodoroDouble} />);
 
-    await screen.findByText(`00:00:${sessionDurationInMinutes}:00`);
+    await screen.findByText(`${sessionDurationInMinutes}:0`);
   });
 });

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import Countdown from 'react-countdown';
 import { GetPomodoro } from '../../application/GetPomodoro';
+import styled from 'styled-components';
+import { Countdown } from './Countdown';
 
 type Props = {
   getPomodoro: GetPomodoro;
@@ -17,14 +18,27 @@ export const PomodoroSession: React.FunctionComponent<Props> = ({ getPomodoro })
   }, [getPomodoro]);
 
   return (
-    <div>
-      {endTime && <Countdown date={endTime} />}
-      <div>
-        Participants:
+    <Container>
+      {endTime && <Countdown endTime={endTime}/>}
+      <ParticipantList>
+        <Title>Participants:</Title>
         {participants.map((participant) => (
           <li key={participant}>{participant}</li>
         ))}
-      </div>
-    </div>
+      </ParticipantList>
+    </Container>
   );
 };
+
+const Container = styled.div`
+  text-align: center;
+  padding: 100px
+`;
+
+const ParticipantList = styled.div`
+  padding: 50px;
+`;
+
+const Title = styled.p`
+  font-weight: bold;
+`;
