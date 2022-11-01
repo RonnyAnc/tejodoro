@@ -14,7 +14,7 @@ export class SessionDynamoDBRepository implements SessionRepository {
       Item: {
         name: { S: session.name },
         participants: { SS: session.participants },
-        status: { M: { name: { S: session.name }, endTime: { N: session.status.endTime.toString() } } },
+        status: { M: { name: { S: session.status.name }, endTime: { N: session.status.endTime.toString() } } },
       },
       TableName: 'Sessions',
     });
