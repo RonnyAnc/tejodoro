@@ -21,9 +21,32 @@ describe('SessionDynamoDBRepository', () => {
 
   let repository: SessionDynamoDBRepository;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     repository = new SessionDynamoDBRepository(client);
-  })
+    await client.createTable({
+      AttributeDefinitions: [
+        {
+          AttributeName: 'name',
+          AttributeType: 'S',
+        },
+      ],
+      KeySchema: [
+        {
+          AttributeName: 'name',
+          KeyType: 'HASH',
+        },
+      ],
+      ProvisionedThroughput: {
+        ReadCapacityUnits: 1,
+        WriteCapacityUnits: 1,
+      },
+      TableName: 'Sessions',
+    });
+  });
+
+  afterEach(async () => {
+    await client.deleteTable({ TableName: 'Sessions' });
+  });
 
   it('should save a new session', async () => {
     await repository.save(session);
