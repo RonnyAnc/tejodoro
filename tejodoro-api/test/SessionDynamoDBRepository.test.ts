@@ -7,7 +7,7 @@ describe('SessionDynamoDBRepository', () => {
   const client = new DynamoDB({
     region: 'eu-west-1',
     endpoint: 'http://localhost:4566',
-    credentials: { accessKeyId: '', secretAccessKey: '' }
+    credentials: { accessKeyId: 'test', secretAccessKey: 'test' },
   });
 
   const session = {
