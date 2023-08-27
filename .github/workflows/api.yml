@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     steps:
       - name: Code checkout
         uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
     if: endsWith(github.ref, '/main')
     steps:
       - uses: actions/checkout@v3
